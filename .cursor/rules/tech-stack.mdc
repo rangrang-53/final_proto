@@ -1,0 +1,106 @@
+# 기술 스택 (Tech Stack)
+## 5060 중장년층 가전제품 사용법 안내 Agent 프로토타입
+
+## 프론트엔드
+
+### 핵심 기술
+- **Framework**: Streamlit
+- **Language**: Python 3.11
+- **UI Components**: Streamlit native components
+
+### 주요 기능 구현
+- **이미지 업로드**: `st.file_uploader()` - 드래그앤드롭 지원
+- **카메라 촬영**: `st.camera_input()` - 웹캠 실시간 촬영
+- **채팅 인터페이스**: `st.chat_message()`, `st.chat_input()` - Agent와 대화
+- **상태 관리**: `st.session_state` - 세션 기반 임시 데이터 저장
+- **반응형 레이아웃**: `st.columns()`, `st.container()` - 모바일 호환
+
+### UI/UX 특화 요소
+- **중장년층 친화적 디자인**: 큰 버튼, 명확한 텍스트, 직관적 아이콘
+- **시각적 피드백**: `st.spinner()`, `st.success()`, `st.error()` - 처리 상태 표시
+- **이미지 표시**: `st.image()` - 업로드된 가전제품 이미지 미리보기
+- **진행 상태**: `st.progress()` - AI 분석 진행률 표시
+
+## 백엔드
+
+### 핵심 기술
+- **Framework**: FastAPI
+- **Language**: Python 3.11
+- **API Architecture**: RESTful API
+
+### API 엔드포인트 구조
+```python
+# 이미지 분석 및 제품 인식
+POST /api/analyze-product
+- Input: 이미지 파일 (multipart/form-data)
+- Output: 제품 정보, 브랜드, 모델명
+
+# Agent와 대화
+POST /api/chat
+- Input: 사용자 질문, 세션 ID, 제품 정보
+- Output: Agent 응답, 사용법 가이드
+
+# 세션 관리
+GET /api/session/{session_id}
+POST /api/session/create
+DELETE /api/session/{session_id}
+```
+
+### 데이터 처리
+- **이미지 처리**: PIL, OpenCV - 이미지 전처리 및 최적화
+- **파일 관리**: 임시 파일 시스템 - 업로드된 이미지 임시 저장
+- **세션 관리**: 메모리 기반 - 데이터베이스 미사용으로 인한 임시 저장
+- **에러 핸들링**: FastAPI exception handlers - 명확한 에러 메시지 제공
+
+### 보안 및 제약사항
+- **CORS 설정**: 프론트엔드-백엔드 통신 허용
+- **파일 크기 제한**: 최대 10MB 이미지 업로드
+- **인증 없음**: 익명 사용자 대상 프로토타입
+- **개인정보 수집 금지**: 이미지 및 대화 내용 저장 안함
+
+## Agent
+
+### 핵심 기술
+- **Framework**: LangGraph
+- **Agent Type**: Pre-built React Agent
+- **LLM**: Gemini-2.5-flash-preview-05-20
+- **Memory**: LangGraph 로컬 메모리 모듈
+- **Monitoring**: LangSmith
+
+### MCP Tools 연동
+```python
+# Naver Search MCP
+- 가전제품 브랜드별 사용법 검색
+- 제품 리뷰 및 사용 팁 수집
+- 한국어 컨텐츠 우선 검색
+
+# Exa Search MCP  
+- 글로벌 제품 정보 검색
+- 기술적 사양 및 매뉴얼 검색
+- 다양한 언어의 사용법 가이드 수집
+```
+
+### Agent 워크플로우
+1. **이미지 분석**: Gemini Vision으로 제품 인식 및 분류
+2. **정보 수집**: MCP Tools로 관련 정보 검색
+3. **가이드 생성**: 수집된 정보 기반 맞춤형 사용법 생성
+4. **대화 처리**: 사용자 추가 질문에 대한 상황별 응답
+5. **메모리 관리**: 세션 내 대화 히스토리 유지
+
+### 프롬프트 전략
+- **제품 인식 프롬프트**: 브랜드, 모델, 카테고리 식별
+- **사용법 생성 프롬프트**: 중장년층 친화적 단계별 가이드
+- **안전 프롬프트**: 가전제품 안전 사용법 강조
+- **한국어 최적화**: 한국 가전제품 브랜드 및 용어 특화
+
+### 성능 최적화
+- **스트리밍 응답**: 실시간 응답 생성으로 사용자 경험 향상
+- **캐싱**: 동일 제품에 대한 반복 질문 시 빠른 응답
+- **에러 복구**: API 호출 실패 시 대체 응답 메커니즘
+- **토큰 관리**: Gemini API 사용량 최적화
+
+### 모니터링 및 디버깅
+- **LangSmith 연동**: Agent 실행 과정 추적 및 분석
+- **로그 수집**: 사용자 질문 패턴 및 응답 품질 모니터링
+- **성능 메트릭**: 응답 시간, 정확도, 사용자 만족도 측정
+- **A/B 테스트**: 다양한 프롬프트 전략 효과 비교

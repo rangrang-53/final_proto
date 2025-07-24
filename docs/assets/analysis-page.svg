@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="1000" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="800" height="1000" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+  
+  <!-- 헤더 -->
+  <rect x="0" y="0" width="800" height="80" fill="#495057"/>
+  <text x="400" y="45" text-anchor="middle" fill="white" font-size="24" font-weight="bold">가전제품 사용법 안내</text>
+  
+  <!-- 업로드된 이미지 영역 -->
+  <rect x="50" y="100" width="700" height="300" fill="white" stroke="#dee2e6" stroke-width="1" rx="10"/>
+  <rect x="80" y="130" width="640" height="240" fill="#e9ecef" stroke="#adb5bd" stroke-width="1" rx="5"/>
+  <text x="400" y="260" text-anchor="middle" fill="#495057" font-size="18">📷 업로드된 가전제품 이미지</text>
+  
+  <!-- 분석 진행 상태 -->
+  <rect x="50" y="430" width="700" height="200" fill="white" stroke="#dee2e6" stroke-width="1" rx="10"/>
+  <text x="400" y="470" text-anchor="middle" fill="#212529" font-size="24" font-weight="bold">🔍 AI가 제품을 분석중입니다...</text>
+  
+  <!-- 진행률 바 -->
+  <rect x="150" y="500" width="500" height="30" fill="#e9ecef" stroke="#adb5bd" stroke-width="1" rx="15"/>
+  <rect x="150" y="500" width="300" height="30" fill="#007bff" rx="15"/>
+  <text x="400" y="520" text-anchor="middle" fill="white" font-size="14" font-weight="bold">60%</text>
+  
+  <!-- 분석 단계 표시 -->
+  <circle cx="200" cy="580" r="15" fill="#28a745"/>
+  <text x="200" y="585" text-anchor="middle" fill="white" font-size="12">✓</text>
+  <text x="230" y="585" fill="#28a745" font-size="16">이미지 업로드 완료</text>
+  
+  <circle cx="200" cy="610" r="15" fill="#007bff"/>
+  <text x="200" y="615" text-anchor="middle" fill="white" font-size="12">●</text>
+  <text x="230" y="615" fill="#007bff" font-size="16">제품 인식 중...</text>
+  
+  <circle cx="200" cy="640" r="15" fill="#6c757d"/>
+  <text x="230" y="645" fill="#6c757d" font-size="16">사용법 정보 수집 대기</text>
+  
+  <!-- 로딩 스피너 영역 -->
+  <circle cx="400" cy="750" r="50" fill="none" stroke="#e9ecef" stroke-width="8"/>
+  <circle cx="400" cy="750" r="50" fill="none" stroke="#007bff" stroke-width="8" 
+          stroke-dasharray="157" stroke-dashoffset="78" transform="rotate(-90 400 750)">
+    <animateTransform attributeName="transform" type="rotate" 
+                      values="-90 400 750;270 400 750" dur="2s" repeatCount="indefinite"/>
+  </circle>
+  
+  <!-- 예상 시간 안내 -->
+  <rect x="50" y="830" width="700" height="80" fill="#d1ecf1" stroke="#bee5eb" stroke-width="1" rx="10"/>
+  <text x="400" y="860" text-anchor="middle" fill="#0c5460" font-size="18" font-weight="bold">⏱️ 예상 완료 시간: 약 3-5초</text>
+  <text x="400" y="885" text-anchor="middle" fill="#0c5460" font-size="16">잠시만 기다려주세요. 곧 결과를 보여드릴게요!</text>
+  
+  <!-- 푸터 -->
+  <rect x="0" y="920" width="800" height="80" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1"/>
+  <text x="400" y="965" text-anchor="middle" fill="#6c757d" font-size="16">5060 중장년층을 위한 AI 가전제품 사용법 안내 서비스</text>
+</svg> 

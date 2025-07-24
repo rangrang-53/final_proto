@@ -1,0 +1,71 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="800" height="1200" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+  
+  <!-- 헤더 -->
+  <rect x="0" y="0" width="800" height="80" fill="#495057"/>
+  <text x="400" y="45" text-anchor="middle" fill="white" font-size="24" font-weight="bold">가전제품 사용법 안내</text>
+  
+  <!-- 제품 인식 결과 -->
+  <rect x="50" y="100" width="700" height="180" fill="white" stroke="#28a745" stroke-width="2" rx="10"/>
+  <text x="400" y="130" text-anchor="middle" fill="#28a745" font-size="20" font-weight="bold">✅ 제품 인식 완료!</text>
+  
+  <rect x="80" y="150" width="150" height="100" fill="#e9ecef" stroke="#adb5bd" stroke-width="1" rx="5"/>
+  <text x="155" y="205" text-anchor="middle" fill="#495057" font-size="14">제품 이미지</text>
+  
+  <text x="260" y="170" fill="#212529" font-size="18" font-weight="bold">브랜드: 필립스 (Philips)</text>
+  <text x="260" y="195" fill="#212529" font-size="18" font-weight="bold">제품: 에어프라이어</text>
+  <text x="260" y="220" fill="#212529" font-size="18" font-weight="bold">모델: HD9252</text>
+  <text x="260" y="245" fill="#6c757d" font-size="16">인식 정확도: 92%</text>
+  
+  <!-- 기본 사용법 가이드 -->
+  <rect x="50" y="300" width="700" height="400" fill="white" stroke="#dee2e6" stroke-width="1" rx="10"/>
+  <text x="400" y="330" text-anchor="middle" fill="#212529" font-size="22" font-weight="bold">📖 기본 사용법 가이드</text>
+  
+  <!-- 단계별 가이드 -->
+  <circle cx="100" cy="370" r="20" fill="#007bff"/>
+  <text x="100" y="375" text-anchor="middle" fill="white" font-size="16" font-weight="bold">1</text>
+  <text x="140" y="375" fill="#212529" font-size="18" font-weight="bold">전원 연결 및 켜기</text>
+  <text x="140" y="395" fill="#6c757d" font-size="16">전원 코드를 연결하고 전원 버튼을 눌러주세요</text>
+  
+  <circle cx="100" cy="430" r="20" fill="#007bff"/>
+  <text x="100" y="435" text-anchor="middle" fill="white" font-size="16" font-weight="bold">2</text>
+  <text x="140" y="435" fill="#212529" font-size="18" font-weight="bold">바스켓 준비</text>
+  <text x="140" y="455" fill="#6c757d" font-size="16">바스켓을 꺼내서 음식을 넣어주세요</text>
+  
+  <circle cx="100" cy="490" r="20" fill="#007bff"/>
+  <text x="100" y="495" text-anchor="middle" fill="white" font-size="16" font-weight="bold">3</text>
+  <text x="140" y="495" fill="#212529" font-size="18" font-weight="bold">온도 및 시간 설정</text>
+  <text x="140" y="515" fill="#6c757d" font-size="16">다이얼을 돌려 온도(180°C)와 시간(15분)을 설정하세요</text>
+  
+  <circle cx="100" cy="550" r="20" fill="#007bff"/>
+  <text x="100" y="555" text-anchor="middle" fill="white" font-size="16" font-weight="bold">4</text>
+  <text x="140" y="555" fill="#212529" font-size="18" font-weight="bold">조리 시작</text>
+  <text x="140" y="575" fill="#6c757d" font-size="16">바스켓을 넣고 타이머가 울릴 때까지 기다리세요</text>
+  
+  <!-- 안전 주의사항 -->
+  <rect x="50" y="620" width="700" height="100" fill="#fff3cd" stroke="#ffeaa7" stroke-width="1" rx="10"/>
+  <text x="400" y="650" text-anchor="middle" fill="#856404" font-size="18" font-weight="bold">⚠️ 안전 주의사항</text>
+  <text x="80" y="675" fill="#856404" font-size="16">• 조리 중에는 바스켓을 만지지 마세요 (화상 위험)</text>
+  <text x="80" y="695" fill="#856404" font-size="16">• 사용 후에는 전원을 끄고 충분히 식힌 후 청소하세요</text>
+  
+  <!-- 추가 질문 영역 -->
+  <rect x="50" y="740" width="700" height="120" fill="#e7f3ff" stroke="#b3d9ff" stroke-width="1" rx="10"/>
+  <text x="400" y="770" text-anchor="middle" fill="#004085" font-size="20" font-weight="bold">💬 더 자세한 사용법이 궁금하신가요?</text>
+  <text x="400" y="795" text-anchor="middle" fill="#004085" font-size="16">아래에 질문을 입력하시면 AI가 맞춤형 답변을 드립니다</text>
+  
+  <rect x="100" y="810" width="500" height="40" fill="white" stroke="#007bff" stroke-width="2" rx="20"/>
+  <text x="120" y="835" fill="#6c757d" font-size="16">예: "감자튀김 만드는 방법 알려주세요"</text>
+  
+  <rect x="620" y="810" width="80" height="40" fill="#007bff" stroke="#007bff" rx="20"/>
+  <text x="660" y="835" text-anchor="middle" fill="white" font-size="16" font-weight="bold">질문</text>
+  
+  <!-- 새로운 제품 분석 버튼 -->
+  <rect x="50" y="880" width="700" height="60" fill="#6c757d" stroke="#6c757d" rx="10"/>
+  <text x="400" y="915" text-anchor="middle" fill="white" font-size="18" font-weight="bold">🔄 다른 제품 분석하기</text>
+  
+  <!-- 푸터 -->
+  <rect x="0" y="1120" width="800" height="80" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1"/>
+  <text x="400" y="1165" text-anchor="middle" fill="#6c757d" font-size="16">5060 중장년층을 위한 AI 가전제품 사용법 안내 서비스</text>
+</svg> 

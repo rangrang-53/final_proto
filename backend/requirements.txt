@@ -1,0 +1,30 @@
+# FastAPI 백엔드 의존성
+fastapi>=0.104.0
+uvicorn[standard]>=0.24.0
+python-multipart>=0.0.6
+python-jose[cryptography]>=3.3.0
+passlib[bcrypt]>=1.7.4
+
+# 이미지 처리
+Pillow>=10.0.0
+opencv-python>=4.8.0
+easyocr>=1.7.0
+numpy>=1.24.0
+
+# AI/ML
+google-generativeai>=0.3.0
+langgraph>=0.0.40
+langsmith>=0.0.70
+langchain-google-genai>=1.0.0
+langchain-core>=0.1.0
+
+# HTTP 클라이언트
+httpx>=0.25.0
+requests>=2.31.0
+
+# 환경 변수 관리
+python-dotenv>=1.0.0
+
+# 유틸리티
+pydantic>=2.4.0
+pydantic-settings>=2.0.0 

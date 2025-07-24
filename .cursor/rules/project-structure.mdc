@@ -1,0 +1,116 @@
+# 프로젝트 폴더 구조 (Project Structure)
+## 5060 중장년층 가전제품 사용법 안내 Agent 프로토타입
+
+## 폴더 트리
+
+```
+proto/
+├── backend/                          # FastAPI 백엔드
+│   ├── __init__.py
+│   ├── main.py                       # FastAPI 애플리케이션 진입점
+│   ├── config/                       # 설정 관리
+│   │   ├── __init__.py
+│   │   ├── settings.py               # 환경 설정
+│   │   └── database.py               # 데이터베이스 설정 (메모리 기반)
+│   ├── api/                          # API 라우터 레이어
+│   │   ├── __init__.py
+│   │   ├── routes/                   # 라우터 모듈
+│   │   │   ├── __init__.py
+│   │   │   ├── product.py            # 제품 분석 API
+│   │   │   ├── chat.py               # 채팅 API
+│   │   │   ├── session.py            # 세션 관리 API
+│   │   │   └── health.py             # 상태 확인 API
+│   │   └── dependencies.py           # API 의존성 주입
+│   ├── services/                     # 비즈니스 로직 레이어
+│   │   ├── __init__.py
+│   │   ├── image_service.py          # 이미지 처리 서비스
+│   │   ├── agent_service.py          # AI Agent 서비스
+│   │   ├── session_service.py        # 세션 관리 서비스
+│   │   └── product_service.py        # 제품 인식 서비스
+│   ├── models/                       # 데이터 모델 레이어
+│   │   ├── __init__.py
+│   │   ├── request_models.py         # 요청 데이터 모델
+│   │   ├── response_models.py        # 응답 데이터 모델
+│   │   └── session_models.py         # 세션 데이터 모델
+│   ├── core/                         # 핵심 기능 레이어
+│   │   ├── __init__.py
+│   │   ├── agent/                    # AI Agent 구성
+│   │   │   ├── __init__.py
+│   │   │   ├── graph_agent.py        # LangGraph Agent 구현
+│   │   │   ├── tools/                # MCP Tools
+│   │   │   │   ├── __init__.py
+│   │   │   │   ├── naver_search.py   # 네이버 검색 도구
+│   │   │   │   └── exa_search.py     # Exa 검색 도구
+│   │   │   └── prompts/              # 프롬프트 템플릿
+│   │   │       ├── __init__.py
+│   │   │       ├── product_prompt.py # 제품 인식 프롬프트
+│   │   │       └── guide_prompt.py   # 사용법 가이드 프롬프트
+│   │   └── memory/                   # 메모리 관리
+│   │       ├── __init__.py
+│   │       ├── local_memory.py       # 로컬 메모리 구현
+│   │       └── session_memory.py     # 세션 메모리 관리
+│   ├── utils/                        # 유틸리티 레이어
+│   │   ├── __init__.py
+│   │   ├── image_utils.py            # 이미지 처리 유틸
+│   │   ├── validation_utils.py       # 검증 유틸
+│   │   ├── error_handlers.py         # 에러 핸들러
+│   │   └── logger.py                 # 로깅 설정
+│   └── requirements.txt              # Python 의존성
+├── frontend/                         # Streamlit 프론트엔드
+│   ├── __init__.py
+│   ├── app.py                        # Streamlit 애플리케이션 진입점
+│   ├── pages/                        # 페이지 컴포넌트
+│   │   ├── __init__.py
+│   │   ├── main_page.py              # 메인 페이지
+│   │   ├── analysis_page.py          # 분석 페이지
+│   │   ├── result_page.py            # 결과 페이지
+│   │   └── chat_page.py              # 채팅 페이지
+│   ├── components/                   # UI 컴포넌트
+│   │   ├── __init__.py
+│   │   ├── upload_component.py       # 파일 업로드 컴포넌트
+│   │   ├── camera_component.py       # 카메라 컴포넌트
+│   │   ├── chat_component.py         # 채팅 컴포넌트
+│   │   └── display_component.py      # 결과 표시 컴포넌트
+│   ├── services/                     # 프론트엔드 서비스
+│   │   ├── __init__.py
+│   │   ├── api_client.py             # 백엔드 API 클라이언트
+│   │   └── state_manager.py          # 상태 관리
+│   ├── utils/                        # 프론트엔드 유틸리티
+│   │   ├── __init__.py
+│   │   ├── ui_utils.py               # UI 헬퍼 함수
+│   │   └── constants.py              # 상수 정의
+│   └── requirements.txt              # Streamlit 의존성
+├── shared/                           # 공통 모듈
+│   ├── __init__.py
+│   ├── constants.py                  # 전역 상수
+│   ├── types.py                      # 공통 타입 정의
+│   └── exceptions.py                 # 커스텀 예외
+├── tests/                            # 테스트 코드
+│   ├── __init__.py
+│   ├── backend/                      # 백엔드 테스트
+│   │   ├── __init__.py
+│   │   ├── test_api.py               # API 테스트
+│   │   └── test_services.py          # 서비스 테스트
+│   └── frontend/                     # 프론트엔드 테스트
+│       ├── __init__.py
+│       └── test_components.py        # 컴포넌트 테스트
+├── docs/                             # 문서
+│   ├── ux-wireframes.md              # UX 와이어프레임
+│   └── assets/                       # 문서 자산
+│       ├── main-page.svg
+│       ├── analysis-page.svg
+│       ├── result-page.svg
+│       └── chat-page.svg
+├── .cursor/                          # Cursor 룰
+│   └── rules/                        # 프로젝트 룰 파일들
+│       ├── project-scope.md
+│       ├── user-scenarios.mdc
+│       ├── prd.mdc
+│       ├── tech-stack.mdc
+│       ├── system-architecture.mdc
+│       └── api-specification.mdc
+├── .env.example                      # 환경 변수 예시
+├── .gitignore                        # Git 무시 파일
+├── README.md                         # 프로젝트 설명
+└── run.py                           # 프로젝트 실행 스크립트
+```

@@ -1,0 +1,96 @@
+# API 명세서 (API Specification)
+## 5060 중장년층 가전제품 사용법 안내 Agent 프로토타입
+
+## 1. 제품 분석 API
+
+| 항목 | 내용 |
+|------|------|
+| **엔드포인트 URL** | `/api/analyze-product` |
+| **HTTP 메서드** | `POST` |
+| **요청 파라미터** | `file`: 이미지 파일 (multipart/form-data)<br>`session_id`: 세션 식별자 (optional) |
+| **요청 예시** | ```bash<br>curl -X POST "http://localhost:8000/api/analyze-product" \<br>  -F "file=@airfryer.jpg" \<br>  -F "session_id=abc123"<br>``` |
+| **응답 구조** | ```json<br>{<br>  "success": true,<br>  "data": {<br>    "brand": "필립스",<br>    "model": "HD9252",<br>    "category": "에어프라이어",<br>    "confidence": 0.92,<br>    "basic_guide": "1. 전원을 연결하세요..."<br>  },<br>  "session_id": "abc123",<br>  "timestamp": "2024-01-15T10:30:00Z"<br>}<br>``` |
+
+## 2. 채팅 API
+
+| 항목 | 내용 |
+|------|------|
+| **엔드포인트 URL** | `/api/chat` |
+| **HTTP 메서드** | `POST` |
+| **요청 파라미터** | `message`: 사용자 질문 (string)<br>`session_id`: 세션 식별자 (string)<br>`product_info`: 제품 정보 (object, optional)<br>`context`: 대화 맥락 (string, optional) |
+| **요청 예시** | ```json<br>{<br>  "message": "감자튀김 만드는 방법 알려주세요",<br>  "session_id": "abc123",<br>  "product_info": {<br>    "brand": "필립스",<br>    "model": "HD9252",<br>    "category": "에어프라이어"<br>  }<br>}<br>``` |
+| **응답 구조** | ```json<br>{<br>  "success": true,<br>  "data": {<br>    "response": "감자튀김 만들기 가이드를 알려드릴게요!",<br>    "guide_steps": [<br>      "1. 감자를 1cm 두께로 썰어주세요",<br>      "2. 180°C, 15분으로 설정하세요"<br>    ],<br>    "safety_notes": ["화상 주의"],<br>    "related_questions": ["청소 방법", "다른 요리법"]<br>  },<br>  "session_id": "abc123",<br>  "timestamp": "2024-01-15T10:35:00Z"<br>}<br>``` |
+
+## 3. 세션 생성 API
+
+| 항목 | 내용 |
+|------|------|
+| **엔드포인트 URL** | `/api/session/create` |
+| **HTTP 메서드** | `POST` |
+| **요청 파라미터** | 없음 |
+| **요청 예시** | ```bash<br>curl -X POST "http://localhost:8000/api/session/create"<br>``` |
+| **응답 구조** | ```json<br>{<br>  "success": true,<br>  "data": {<br>    "session_id": "abc123",<br>    "created_at": "2024-01-15T10:30:00Z",<br>    "expires_at": "2024-01-15T11:30:00Z"<br>  }<br>}<br>``` |
+
+## 4. 세션 조회 API
+
+| 항목 | 내용 |
+|------|------|
+| **엔드포인트 URL** | `/api/session/{session_id}` |
+| **HTTP 메서드** | `GET` |
+| **요청 파라미터** | `session_id`: 세션 식별자 (path parameter) |
+| **요청 예시** | ```bash<br>curl -X GET "http://localhost:8000/api/session/abc123"<br>``` |
+| **응답 구조** | ```json<br>{<br>  "success": true,<br>  "data": {<br>    "session_id": "abc123",<br>    "product_info": {<br>      "brand": "필립스",<br>      "model": "HD9252",<br>      "category": "에어프라이어"<br>    },<br>    "chat_history": [<br>      {<br>        "role": "user",<br>        "message": "감자튀김 만드는 방법",<br>        "timestamp": "2024-01-15T10:35:00Z"<br>      }<br>    ],<br>    "created_at": "2024-01-15T10:30:00Z"<br>  }<br>}<br>``` |
+
+## 5. 세션 삭제 API
+
+| 항목 | 내용 |
+|------|------|
+| **엔드포인트 URL** | `/api/session/{session_id}` |
+| **HTTP 메서드** | `DELETE` |
+| **요청 파라미터** | `session_id`: 세션 식별자 (path parameter) |
+| **요청 예시** | ```bash<br>curl -X DELETE "http://localhost:8000/api/session/abc123"<br>``` |
+| **응답 구조** | ```json<br>{<br>  "success": true,<br>  "message": "세션이 삭제되었습니다",<br>  "session_id": "abc123"<br>}<br>``` |
+
+## 6. 상태 확인 API
+
+| 항목 | 내용 |
+|------|------|
+| **엔드포인트 URL** | `/api/health` |
+| **HTTP 메서드** | `GET` |
+| **요청 파라미터** | 없음 |
+| **요청 예시** | ```bash<br>curl -X GET "http://localhost:8000/api/health"<br>``` |
+| **응답 구조** | ```json<br>{<br>  "success": true,<br>  "data": {<br>    "status": "healthy",<br>    "version": "1.0.0",<br>    "uptime": "01:23:45",<br>    "services": {<br>      "gemini_api": "connected",<br>      "langgraph": "running",<br>      "mcp_tools": "available"<br>    }<br>  },<br>  "timestamp": "2024-01-15T10:30:00Z"<br>}<br>``` |
+
+## 공통 응답 형식
+
+### 성공 응답
+```json
+{
+  "success": true,
+  "data": { /* 실제 데이터 */ },
+  "message": "요청이 성공적으로 처리되었습니다",
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+### 에러 응답
+```json
+{
+  "success": false,
+  "error": {
+    "code": "INVALID_FILE_FORMAT",
+    "message": "지원하지 않는 파일 형식입니다",
+    "details": "JPG, PNG, WEBP 파일만 업로드 가능합니다"
+  },
+  "timestamp": "2024-01-15T10:30:00Z"
+}
+```
+
+## 파일 업로드 제약사항
+
+| 항목 | 제한사항 |
+|------|----------|
+| **파일 형식** | JPG, PNG, WEBP |
+| **최대 파일 크기** | 10MB |
+| **동시 업로드** | 1개 파일 |
+| **세션 유지 시간** | 1시간 |

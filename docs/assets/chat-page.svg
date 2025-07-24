@@ -1,0 +1,80 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="800" height="1200" xmlns="http://www.w3.org/2000/svg">
+  <!-- 배경 -->
+  <rect width="800" height="1200" fill="#f8f9fa" stroke="#dee2e6" stroke-width="2"/>
+  
+  <!-- 헤더 -->
+  <rect x="0" y="0" width="800" height="80" fill="#495057"/>
+  <text x="400" y="45" text-anchor="middle" fill="white" font-size="24" font-weight="bold">가전제품 사용법 안내</text>
+  
+  <!-- 제품 정보 요약 -->
+  <rect x="50" y="100" width="700" height="80" fill="#e7f3ff" stroke="#b3d9ff" stroke-width="1" rx="10"/>
+  <text x="80" y="130" fill="#004085" font-size="16" font-weight="bold">📱 현재 제품: 필립스 에어프라이어 HD9252</text>
+  <text x="80" y="155" fill="#004085" font-size="14">AI와 대화하며 더 자세한 사용법을 알아보세요</text>
+  
+  <!-- 채팅 영역 -->
+  <rect x="50" y="200" width="700" height="800" fill="white" stroke="#dee2e6" stroke-width="1" rx="10"/>
+  
+  <!-- 사용자 메시지 1 -->
+  <rect x="150" y="230" width="500" height="60" fill="#007bff" stroke="#007bff" rx="20"/>
+  <text x="170" y="250" fill="white" font-size="16" font-weight="bold">👤 사용자</text>
+  <text x="170" y="270" fill="white" font-size="16">감자튀김 만드는 방법을 자세히 알려주세요</text>
+  
+  <!-- AI 응답 1 -->
+  <rect x="100" y="310" width="600" height="200" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="20"/>
+  <text x="120" y="330" fill="#007bff" font-size="16" font-weight="bold">🤖 AI 어시스턴트</text>
+  <text x="120" y="355" fill="#212529" font-size="16" font-weight="bold">감자튀김 만들기 가이드를 알려드릴게요! 🍟</text>
+  
+  <text x="120" y="380" fill="#212529" font-size="15" font-weight="bold">1단계: 감자 준비</text>
+  <text x="140" y="400" fill="#495057" font-size="14">• 감자를 깨끗이 씻고 껍질을 벗겨주세요</text>
+  <text x="140" y="420" fill="#495057" font-size="14">• 1cm 두께로 길게 썰어주세요</text>
+  
+  <text x="120" y="445" fill="#212529" font-size="15" font-weight="bold">2단계: 조리 설정</text>
+  <text x="140" y="465" fill="#495057" font-size="14">• 온도: 180°C, 시간: 15분으로 설정</text>
+  <text x="140" y="485" fill="#495057" font-size="14">• 중간에 한 번 뒤집어주세요 (8분 후)</text>
+  
+  <!-- 사용자 메시지 2 -->
+  <rect x="150" y="530" width="500" height="60" fill="#007bff" stroke="#007bff" rx="20"/>
+  <text x="170" y="550" fill="white" font-size="16" font-weight="bold">👤 사용자</text>
+  <text x="170" y="570" fill="white" font-size="16">온도를 어떻게 조절하나요?</text>
+  
+  <!-- AI 응답 2 -->
+  <rect x="100" y="610" width="600" height="120" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="20"/>
+  <text x="120" y="630" fill="#007bff" font-size="16" font-weight="bold">🤖 AI 어시스턴트</text>
+  <text x="120" y="655" fill="#212529" font-size="16">온도 조절 방법을 설명드릴게요! 🌡️</text>
+  
+  <text x="120" y="680" fill="#495057" font-size="14">• 제품 앞면의 온도 다이얼을 시계방향으로 돌리세요</text>
+  <text x="120" y="700" fill="#495057" font-size="14">• 숫자가 표시된 눈금에 맞춰 180°C로 설정하세요</text>
+  <text x="120" y="720" fill="#495057" font-size="14">• 설정이 완료되면 LED 표시등이 켜집니다</text>
+  
+  <!-- 추천 질문 -->
+  <rect x="80" y="750" width="640" height="120" fill="#fff3cd" stroke="#ffeaa7" stroke-width="1" rx="10"/>
+  <text x="400" y="775" text-anchor="middle" fill="#856404" font-size="16" font-weight="bold">💡 이런 질문도 해보세요!</text>
+  
+  <rect x="100" y="790" width="180" height="35" fill="white" stroke="#ffc107" stroke-width="1" rx="17"/>
+  <text x="190" y="812" text-anchor="middle" fill="#856404" font-size="14">청소 방법</text>
+  
+  <rect x="310" y="790" width="180" height="35" fill="white" stroke="#ffc107" stroke-width="1" rx="17"/>
+  <text x="400" y="812" text-anchor="middle" fill="#856404" font-size="14">안전 사용법</text>
+  
+  <rect x="520" y="790" width="180" height="35" fill="white" stroke="#ffc107" stroke-width="1" rx="17"/>
+  <text x="610" y="812" text-anchor="middle" fill="#856404" font-size="14">다른 요리법</text>
+  
+  <rect x="205" y="835" width="180" height="35" fill="white" stroke="#ffc107" stroke-width="1" rx="17"/>
+  <text x="295" y="857" text-anchor="middle" fill="#856404" font-size="14">문제 해결</text>
+  
+  <rect x="415" y="835" width="180" height="35" fill="white" stroke="#ffc107" stroke-width="1" rx="17"/>
+  <text x="505" y="857" text-anchor="middle" fill="#856404" font-size="14">부품 교체</text>
+  
+  <!-- 메시지 입력 영역 -->
+  <rect x="50" y="1020" width="700" height="80" fill="white" stroke="#007bff" stroke-width="2" rx="10"/>
+  <rect x="80" y="1040" width="560" height="40" fill="#f8f9fa" stroke="#dee2e6" stroke-width="1" rx="20"/>
+  <text x="100" y="1065" fill="#6c757d" font-size="16">궁금한 점을 입력해주세요...</text>
+  
+  <rect x="660" y="1040" width="60" height="40" fill="#007bff" stroke="#007bff" rx="20"/>
+  <text x="690" y="1065" text-anchor="middle" fill="white" font-size="16" font-weight="bold">전송</text>
+  
+  <!-- 새로운 제품 분석 버튼 -->
+  <rect x="50" y="1120" width="700" height="60" fill="#6c757d" stroke="#6c757d" rx="10"/>
+  <text x="400" y="1155" text-anchor="middle" fill="white" font-size="18" font-weight="bold">🔄 다른 제품 분석하기</text>
+</svg> 

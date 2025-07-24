@@ -1,0 +1,449 @@
+# 시스템 아키텍처 (System Architecture)
+## 5060 중장년층 가전제품 사용법 안내 Agent 프로토타입
+
+## 아키텍처 구성요소
+
+### 전체 시스템 구조
+```mermaid
+graph TB
+    subgraph "사용자 계층"
+        U[👥 5060 중장년층 사용자]
+        D[📱 디바이스: 스마트폰/PC]
+    end
+    
+    subgraph "프레젠테이션 계층"
+        ST[🖥️ Streamlit Frontend]
+        UI[🎨 중장년층 친화적 UI]
+    end
+    
+    subgraph "애플리케이션 계층"
+        API[⚡ FastAPI Backend]
+        subgraph "비즈니스 로직"
+            IMG[🖼️ 이미지 처리 모듈]
+            SES[🔄 세션 관리 모듈]
+            VAL[✅ 검증 모듈]
+        end
+    end
+    
+    subgraph "AI 에이전트 계층"
+        LG[🤖 LangGraph Agent]
+        GM[🧠 Gemini-2.5-flash-preview-05-20]
+        MEM[💾 로컬 메모리]
+        LS[📊 LangSmith 모니터링]
+    end
+    
+    subgraph "외부 서비스 계층"
+        subgraph "MCP Tools"
+            NS[🔍 Naver Search MCP]
+            ES[🌐 Exa Search MCP]
+        end
+        GV[👁️ Gemini Vision API]
+    end
+    
+    U --> D
+    D --> ST
+    ST --> UI
+    UI --> API
+    API --> IMG
+    API --> SES
+    API --> VAL
+    API --> LG
+    LG --> GM
+    LG --> MEM
+    LG --> LS
+    LG --> NS
+    LG --> ES
+    GM --> GV
+```
+
+## 계층 구조
+
+### 4계층 아키텍처
+```mermaid
+graph TD
+    subgraph "Layer 1: Presentation Layer"
+        A1[Streamlit Web Interface]
+        A2[반응형 UI Components]
+        A3[중장년층 친화적 UX]
+    end
+    
+    subgraph "Layer 2: Application Layer"
+        B1[FastAPI REST API]
+        B2[이미지 업로드 핸들러]
+        B3[세션 관리 서비스]
+        B4[에러 핸들링]
+    end
+    
+    subgraph "Layer 3: Business Logic Layer"
+        C1[AI Agent 오케스트레이션]
+        C2[제품 인식 로직]
+        C3[사용법 생성 로직]
+        C4[대화 처리 로직]
+    end
+    
+    subgraph "Layer 4: External Services Layer"
+        D1[Gemini Vision API]
+        D2[Naver Search MCP]
+        D3[Exa Search MCP]
+        D4[LangSmith Monitoring]
+    end
+    
+    A1 --> B1
+    A2 --> B2
+    A3 --> B3
+    B1 --> C1
+    B2 --> C2
+    B3 --> C3
+    B4 --> C4
+    C1 --> D1
+    C2 --> D2
+    C3 --> D3
+    C4 --> D4
+```
+
+## 모듈화 및 컴포넌트
+
+### 프론트엔드 컴포넌트 구조
+```mermaid
+graph LR
+    subgraph "Streamlit App"
+        M[📱 Main App]
+        subgraph "UI Components"
+            UC[📤 Upload Component]
+            CC[📸 Camera Component]
+            CH[💬 Chat Component]
+            DP[🖼️ Display Component]
+        end
+        subgraph "State Management"
+            SS[🗂️ Session State]
+            CS[🔄 Cache State]
+        end
+    end
+    
+    M --> UC
+    M --> CC
+    M --> CH
+    M --> DP
+    M --> SS
+    M --> CS
+```
+
+### 백엔드 모듈 구조
+```mermaid
+graph TB
+    subgraph "FastAPI Application"
+        R[🛣️ Router]
+        subgraph "Services"
+            IS[🖼️ Image Service]
+            AS[🤖 Agent Service]
+            SS[🔄 Session Service]
+        end
+        subgraph "Models"
+            RM[📝 Request Models]
+            RSM[📤 Response Models]
+        end
+        subgraph "Utils"
+            IU[🔧 Image Utils]
+            VU[✅ Validation Utils]
+            EU[❌ Error Utils]
+        end
+    end
+    
+    R --> IS
+    R --> AS
+    R --> SS
+    IS --> RM
+    AS --> RSM
+    SS --> IU
+    IS --> VU
+    AS --> EU
+```
+
+### AI Agent 컴포넌트 구조
+```mermaid
+graph TD
+    subgraph "LangGraph Agent"
+        RA[⚛️ React Agent]
+        subgraph "Tools"
+            VT[👁️ Vision Tool]
+            NT[🔍 Naver Tool]
+            ET[🌐 Exa Tool]
+        end
+        subgraph "Memory"
+            LM[💾 Local Memory]
+            CH[📚 Chat History]
+        end
+        subgraph "Prompts"
+            PP[🎯 Product Prompt]
+            GP[📖 Guide Prompt]
+            SP[🛡️ Safety Prompt]
+        end
+    end
+    
+    RA --> VT
+    RA --> NT
+    RA --> ET
+    RA --> LM
+    RA --> CH
+    VT --> PP
+    NT --> GP
+    ET --> SP
+```
+
+## 데이터 흐름
+
+### 전체 데이터 플로우
+```mermaid
+sequenceDiagram
+    participant U as 👥 사용자
+    participant ST as 🖥️ Streamlit
+    participant API as ⚡ FastAPI
+    participant AG as 🤖 Agent
+    participant GM as 🧠 Gemini
+    participant MCP as 🔍 MCP Tools
+    
+    U->>ST: 1. 이미지 업로드/촬영
+    ST->>API: 2. POST /api/analyze-product
+    API->>AG: 3. 이미지 분석 요청
+    AG->>GM: 4. Gemini Vision 호출
+    GM-->>AG: 5. 제품 인식 결과
+    AG->>MCP: 6. 제품 정보 검색
+    MCP-->>AG: 7. 사용법 정보 반환
+    AG-->>API: 8. 분석 결과 + 기본 가이드
+    API-->>ST: 9. 제품 정보 응답
+    ST-->>U: 10. 제품 정보 + 기본 사용법 표시
+    
+    U->>ST: 11. 추가 질문 입력
+    ST->>API: 12. POST /api/chat
+    API->>AG: 13. 대화 처리 요청
+    AG->>GM: 14. 맞춤형 응답 생성
+    GM-->>AG: 15. 상세 가이드 생성
+    AG-->>API: 16. 대화 응답
+    API-->>ST: 17. 채팅 응답
+    ST-->>U: 18. 맞춤형 사용법 가이드 표시
+```
+
+### 세션 기반 데이터 관리
+```mermaid
+graph LR
+    subgraph "Session Data Flow"
+        SC[🆔 Session Create]
+        SI[🖼️ Session Image]
+        SP[📋 Session Product]
+        SH[💬 Session History]
+        SD[🗑️ Session Delete]
+    end
+    
+    SC --> SI
+    SI --> SP
+    SP --> SH
+    SH --> SD
+    
+    subgraph "Memory Management"
+        TM[⏰ Temporary Memory]
+        LM[💾 Local Memory]
+        CM[🗂️ Cache Memory]
+    end
+    
+    SI --> TM
+    SP --> LM
+    SH --> CM
+```
+
+## API 및 인터페이스
+
+### REST API 엔드포인트
+```mermaid
+graph TB
+    subgraph "API Gateway"
+        GW[🚪 FastAPI Gateway]
+    end
+    
+    subgraph "Product Analysis API"
+        PA[POST /api/analyze-product]
+        PAR[📤 Response: 제품정보]
+    end
+    
+    subgraph "Chat API"
+        CA[POST /api/chat]
+        CAR[📤 Response: Agent응답]
+    end
+    
+    subgraph "Session Management API"
+        SCA[POST /api/session/create]
+        SGA[GET /api/session/{id}]
+        SDA[DELETE /api/session/{id}]
+    end
+    
+    subgraph "Health Check API"
+        HC[GET /api/health]
+        HCR[📤 Response: 상태정보]
+    end
+    
+    GW --> PA
+    GW --> CA
+    GW --> SCA
+    GW --> SGA
+    GW --> SDA
+    GW --> HC
+    PA --> PAR
+    CA --> CAR
+    HC --> HCR
+```
+
+### 인터페이스 명세
+```mermaid
+classDiagram
+    class ImageUploadRequest {
+        +file: UploadFile
+        +session_id: str
+        +timestamp: datetime
+    }
+    
+    class ProductAnalysisResponse {
+        +brand: str
+        +model: str
+        +category: str
+        +confidence: float
+        +basic_guide: str
+    }
+    
+    class ChatRequest {
+        +message: str
+        +session_id: str
+        +product_info: dict
+        +context: str
+    }
+    
+    class ChatResponse {
+        +response: str
+        +guide_steps: list
+        +safety_notes: list
+        +related_questions: list
+    }
+    
+    ImageUploadRequest --> ProductAnalysisResponse
+    ChatRequest --> ChatResponse
+```
+
+## 시스템 외부 환경과의 관계
+
+### 외부 서비스 의존성
+```mermaid
+graph TB
+    subgraph "Internal System"
+        IS[🏠 가전제품 사용법 안내 Agent]
+    end
+    
+    subgraph "Google Services"
+        GV[👁️ Gemini Vision API]
+        GL[🧠 Gemini LLM API]
+        GC[☁️ Google Cloud Platform]
+    end
+    
+    subgraph "MCP Services"
+        NS[🔍 Naver Search API]
+        ES[🌐 Exa Search API]
+    end
+    
+    subgraph "Monitoring Services"
+        LS[📊 LangSmith Platform]
+        LG[📈 Logging Service]
+    end
+    
+    subgraph "User Environment"
+        WB[🌐 Web Browser]
+        MB[📱 Mobile Browser]
+        CAM[📸 Camera Device]
+    end
+    
+    IS --> GV
+    IS --> GL
+    IS --> GC
+    IS --> NS
+    IS --> ES
+    IS --> LS
+    IS --> LG
+    WB --> IS
+    MB --> IS
+    CAM --> IS
+```
+
+### 네트워크 통신 구조
+```mermaid
+graph LR
+    subgraph "Client Side"
+        CB[🌐 Client Browser]
+        CD[📱 Client Device]
+    end
+    
+    subgraph "Load Balancer"
+        LB[⚖️ Load Balancer]
+    end
+    
+    subgraph "Application Server"
+        AS[🖥️ App Server]
+        subgraph "Internal Services"
+            ST[📱 Streamlit:8501]
+            FA[⚡ FastAPI:8000]
+        end
+    end
+    
+    subgraph "External APIs"
+        HTTPS[🔒 HTTPS/443]
+        subgraph "Third Party"
+            GA[🧠 Gemini API]
+            NA[🔍 Naver API]
+            EA[🌐 Exa API]
+        end
+    end
+    
+    CB --> LB
+    CD --> LB
+    LB --> AS
+    AS --> ST
+    AS --> FA
+    FA --> HTTPS
+    HTTPS --> GA
+    HTTPS --> NA
+    HTTPS --> EA
+```
+
+### 보안 및 데이터 보호
+```mermaid
+graph TB
+    subgraph "Security Layers"
+        subgraph "Transport Security"
+            TLS[🔒 TLS/HTTPS]
+            CORS[🌐 CORS Policy]
+        end
+        
+        subgraph "Application Security"
+            FS[📁 File Size Limit]
+            FT[📄 File Type Validation]
+            RT[⏱️ Rate Limiting]
+        end
+        
+        subgraph "Data Protection"
+            NP[🚫 No Personal Data]
+            TF[🗑️ Temporary Files]
+            SM[💾 Session Memory Only]
+        end
+    end
+    
+    subgraph "Privacy Compliance"
+        AN[👤 Anonymous Usage]
+        NL[📊 No Logging Personal Data]
+        AD[🔄 Auto Data Deletion]
+    end
+    
+    TLS --> FS
+    CORS --> FT
+    FS --> RT
+    FT --> NP
+    RT --> TF
+    NP --> SM
+    TF --> AN
+    SM --> NL
+    AN --> AD
+```
