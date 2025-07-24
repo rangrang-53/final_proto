@@ -77,6 +77,28 @@ class ApplianceAgent:
         logger.info(f"제품 이미지 분석 시작: {image_path}")
         
         try:
+            # 먼저 product_recognition_service의 결과 확인
+            from services.product_recognition_service import ProductRecognitionService
+            recognition_service = ProductRecognitionService()
+            recognition_result = recognition_service.classify_product_category(image_path)
+            
+            # 가전제품이 아닌 경우 즉시 반환
+            if not recognition_result.get("success", True) or recognition_result.get("category") == "가전제품_아님":
+                logger.info(f"가전제품이 아닌 것으로 판별됨: {recognition_result.get('message', '')}")
+                return {
+                    "success": True,
+                    "product_info": {
+                        "brand": recognition_result.get("brand", "해당없음"),
+                        "category": recognition_result.get("category", "가전제품_아님"),
+                        "model": "해당없음",
+                        "confidence": recognition_result.get("confidence", 0.0),
+                        "description": recognition_result.get("message", "가전제품이 아닙니다."),
+                        "features": [],
+                        "extracted_texts": recognition_result.get("extracted_texts", [])
+                    },
+                    "timestamp": datetime.now().isoformat()
+                }
+            
             # 이미지를 base64로 인코딩
             import base64
             with open(image_path, "rb") as image_file:
@@ -106,7 +128,6 @@ class ApplianceAgent:
             try:
                 # JSON 형식의 응답 파싱 시도
                 content = ai_message.content.strip()
-                
                 # JSON 부분만 추출 (중괄호로 시작하고 끝나는 부분)
                 json_start = content.find('{')
                 json_end = content.rfind('}') + 1
@@ -119,17 +140,58 @@ class ApplianceAgent:
                     raise json.JSONDecodeError("JSON not found", content, 0)
                     
             except json.JSONDecodeError as e:
-                # JSON 파싱 실패 시 기본값 반환
+                # JSON 파싱 실패 시 텍스트에서 브랜드와 카테고리 추출 시도
                 logger.warning(f"제품 인식 응답이 JSON 형식이 아님: {e}")
                 logger.warning(f"AI 응답: {ai_message.content}")
+                
+                # AI 응답에서 브랜드와 카테고리 추출 시도
+                content = ai_message.content.lower()
+                extracted_brand = "불분명"
+                extracted_category = "가전제품"
+                
+                # 브랜드 추출
+                brand_patterns = {
+                    "samsung": ["samsung", "삼성", "갤럭시"],
+                    "lg": ["lg", "엘지"],
+                    "philips": ["philips", "필립스"],
+                    "cuckoo": ["cuckoo", "쿠쿠"],
+                    "winix": ["winix", "위닉스"],
+                    "xiaomi": ["xiaomi", "샤오미"],
+                    "dyson": ["dyson", "다이슨"],
+                    "sharp": ["sharp", "샤프"],
+                    "panasonic": ["panasonic", "파나소닉"]
+                }
+                
+                for brand, patterns in brand_patterns.items():
+                    if any(pattern in content for pattern in patterns):
+                        extracted_brand = brand
+                        break
+                
+                # 카테고리 추출
+                category_patterns = {
+                    "가습기": ["가습기", "humidifier"],
+                    "에어프라이어": ["에어프라이어", "air fryer"],
+                    "전자레인지": ["전자레인지", "microwave"],
+                    "밥솥": ["밥솥", "rice cooker"],
+                    "공기청정기": ["공기청정기", "air purifier"],
+                    "세탁기": ["세탁기", "washing machine"],
+                    "냉장고": ["냉장고", "refrigerator"],
+                    "청소기": ["청소기", "vacuum"],
+                    "선풍기": ["선풍기", "fan"]
+                }
+                
+                for category, patterns in category_patterns.items():
+                    if any(pattern in content for pattern in patterns):
+                        extracted_category = category
+                        break
                 
                 # OCR 결과가 있으면 활용
                 session = memory_db.get_session(session_id)
                 recognition_result = session.get("product_recognition", {})
                 
                 product_info = {
-                    "brand": recognition_result.get("brand", "알 수 없음"),
-                    "category": recognition_result.get("category", "가전제품"),
+                    "brand": recognition_result.get("brand", extracted_brand),
+                    "category": recognition_result.get("category", extracted_category),
                     "model": recognition_result.get("model", "모델 미상"),
                     "confidence": recognition_result.get("confidence", 0.5),
                     "description": ai_message.content,

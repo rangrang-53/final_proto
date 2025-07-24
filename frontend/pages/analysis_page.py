@@ -121,12 +121,51 @@ class AnalysisProgressPage:
             # 분석 결과 확인
             result = self.api_client.get_analysis_result(session_id)
             
+            # 디버깅: 백엔드 응답 전체 출력
+            st.write("DEBUG - 전체 백엔드 응답:", result)
+            
+            # 분석 결과 확인
             if result["success"] and "product_info" in result["data"].get("data", {}):
-                # 분석 완료
+                # 분석 완료 - 가전제품 여부 확인
+                data = result["data"]["data"]
+                product_info = data.get("product_info", {})
+                
+                # 디버깅: 추출된 데이터 출력
+                st.write("DEBUG - 추출된 data:", data)
+                st.write("DEBUG - product_info:", product_info)
+                st.write("DEBUG - is_appliance:", data.get("is_appliance"))
+                st.write("DEBUG - category:", product_info.get("category"))
+                
+                # 가전제품이 아닌 경우 즉시 알림
+                is_appliance = data.get("is_appliance", True)  # 기본값은 True
+                
+                if not is_appliance or product_info.get("category") == "가전제품_아님":
+                    st.error("⚠️ 가전제품이 아닙니다")
+                    st.markdown("업로드하신 이미지는 가전제품이 아닙니다. 가전제품 사진을 촬영하여 다시 업로드해 주세요.")
+                    
+                    # 메인 페이지로 이동 버튼
+                    if st.button("🏠 메인 페이지로 이동", use_container_width=True):
+                        StateManager.clear_state()
+                        StateManager.set_page("main")
+                        st.rerun()
+                    return
+                
+                # 가전제품인 경우 정상 처리
                 show_success_message("✅ 제품 분석이 완료되었습니다!")
                 time.sleep(1)
                 StateManager.set_page("result")
                 st.rerun()
+            elif not result["success"] and "error" in result:
+                # 분석 실패 또는 가전제품이 아닌 경우
+                error_msg = result.get("error", "분석 중 오류가 발생했습니다.")
+                st.error(f"⚠️ {error_msg}")
+                
+                # 메인 페이지로 이동 버튼
+                if st.button("🏠 메인 페이지로 이동", use_container_width=True):
+                    StateManager.clear_state()
+                    StateManager.set_page("main")
+                    st.rerun()
+                return
             else:
                 # 아직 진행 중이면 페이지 새로고침
                 st.rerun()
@@ -138,8 +177,14 @@ class AnalysisProgressPage:
         result = self.api_client.get_analysis_result(session_id)
         
         if result["success"]:
-            data = result["data"]["data"]
+            # 중첩된 데이터 구조 처리
+            data = result.get("data", {})
+            if isinstance(data, dict) and "data" in data:
+                data = data["data"]
+            
             product_info = data.get("product_info", {})
+            
+
             
             # 가전제품이 아닌 경우 처리
             if product_info.get("category") == "가전제품_아님":
@@ -160,7 +205,7 @@ class AnalysisProgressPage:
             
             col1, col2, col3 = st.columns(3)
             with col1:
-                st.metric("브랜드", product_info.get("brand", "알 수 없음"))
+                st.metric("브랜드", product_info.get("brand", "불분명"))
             with col2:
                 st.metric("제품", product_info.get("category", "가전제품"))
             with col3:

@@ -54,10 +54,10 @@ class ProductRecognitionService:
                     "analysis_completed_at": datetime.now().isoformat()
                 })
                 
-                # 가전제품이 아닌 경우 사용법 가이드 생성하지 않음
+                # 가전제품이 아닌 경우 즉시 응답 반환
                 if product_info.get("category") == "가전제품_아님":
                     logger.info(f"가전제품이 아닌 이미지로 판별됨: {product_info.get('message', '')}")
-                    # 가전제품이 아닌 경우에도 세션에 저장
+                    # 가전제품이 아닌 경우 세션에 저장하고 즉시 응답
                     memory_db.update_session(session_id, {
                         "product_info": product_info,
                         "usage_guide": "",
@@ -69,7 +69,8 @@ class ProductRecognitionService:
                             "product_info": product_info,
                             "usage_guide": "",
                             "confidence": product_info.get("confidence", 0.0),
-                            "analysis_timestamp": analysis_result["timestamp"]
+                            "analysis_timestamp": analysis_result["timestamp"],
+                            "is_appliance": False
                         },
                         "timestamp": datetime.now().isoformat()
                     }
@@ -84,6 +85,7 @@ class ProductRecognitionService:
                     })
                 
                 logger.info(f"제품 분석 완료: {product_info.get('brand', 'Unknown')} {product_info.get('category', 'Unknown')}")
+
                 
                 return {
                     "success": True,
@@ -91,7 +93,8 @@ class ProductRecognitionService:
                         "product_info": product_info,
                         "usage_guide": guide_result.get("usage_guide", "사용법 가이드 생성 중..."),
                         "confidence": product_info.get("confidence", 0.0),
-                        "analysis_timestamp": analysis_result["timestamp"]
+                        "analysis_timestamp": analysis_result["timestamp"],
+                        "is_appliance": True
                     },
                     "timestamp": datetime.now().isoformat()
                 }
@@ -127,6 +130,13 @@ class ProductRecognitionService:
                     "timestamp": datetime.now().isoformat()
                 }
             
+            # 가전제품 여부 판별
+            is_appliance = True
+            if product_info.get("category") == "가전제품_아님":
+                is_appliance = False
+            elif not product_info.get("success", True):  # success가 False인 경우도 비가전제품
+                is_appliance = False
+            
             return {
                 "success": True,
                 "data": {
@@ -134,7 +144,8 @@ class ProductRecognitionService:
                         "product_info": product_info,
                         "usage_guide": session.get("usage_guide", ""),
                         "analysis_timestamp": session.get("analysis_completed_at", ""),
-                        "has_image": "uploaded_image" in session
+                        "has_image": "uploaded_image" in session,
+                        "is_appliance": is_appliance
                     }
                 },
                 "timestamp": datetime.now().isoformat()
