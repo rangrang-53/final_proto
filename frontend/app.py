@@ -12,6 +12,7 @@ from pages.main_page import render_main_page
 from pages.analysis_page import render_analysis_page
 from pages.result_page import render_result_page
 from pages.chat_page import render_chat_page
+from pages.config_page import render_config_page
 
 
 def main():

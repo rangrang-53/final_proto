@@ -80,7 +80,7 @@ class ApplianceAgent:
             # 먼저 product_recognition_service의 결과 확인
             from services.product_recognition_service import ProductRecognitionService
             recognition_service = ProductRecognitionService()
-            recognition_result = recognition_service.classify_product_category(image_path)
+            recognition_result = await recognition_service.classify_product_category(image_path)
             
             # 가전제품이 아닌 경우 즉시 반환
             if not recognition_result.get("success", True) or recognition_result.get("category") == "가전제품_아님":

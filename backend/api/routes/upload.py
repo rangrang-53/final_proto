@@ -67,7 +67,7 @@ async def upload_image(
         
         # 제품 인식 수행
         logger.info("제품 인식 시작...")
-        recognition_result = product_recognition_service.classify_product_category(file_path)
+        recognition_result = await product_recognition_service.classify_product_category(file_path)
         
         # 세션에 파일 정보 및 인식 결과 저장
         session_update_data = {

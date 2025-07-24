@@ -14,6 +14,8 @@ class Settings(BaseSettings):
     # API 키
     google_api_key: str = ""
     langsmith_api_key: str = ""
+    naver_client_id: str = ""  # 네이버 클라이언트 ID
+    naver_client_secret: str = ""  # 네이버 클라이언트 시크릿
     
     # 서버 설정
     backend_host: str = "localhost"
@@ -60,4 +62,8 @@ settings = Settings()
 if os.getenv("GOOGLE_API_KEY"):
     settings.google_api_key = os.getenv("GOOGLE_API_KEY")
 if os.getenv("LANGSMITH_API_KEY"):
-    settings.langsmith_api_key = os.getenv("LANGSMITH_API_KEY") 
+    settings.langsmith_api_key = os.getenv("LANGSMITH_API_KEY")
+if os.getenv("NAVER_CLIENT_ID"):
+    settings.naver_client_id = os.getenv("NAVER_CLIENT_ID")
+if os.getenv("NAVER_CLIENT_SECRET"):
+    settings.naver_client_secret = os.getenv("NAVER_CLIENT_SECRET") 

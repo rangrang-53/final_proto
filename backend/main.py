@@ -17,8 +17,9 @@ import uvicorn
 
 from config.settings import settings
 from utils.logger import logger
-from api.routes import health, upload, session, product, chat
+from api.routes import health, upload, session, product, chat, config
 from core.agent.agent_core import initialize_agent
+from services.simple_product_search_service import simple_product_search_service
 
 
 @asynccontextmanager
@@ -27,6 +28,16 @@ async def lifespan(app: FastAPI):
     # 시작 시
     logger.info("🚀 백엔드 서버가 시작됩니다...")
     logger.info(f"서버 주소: http://{settings.backend_host}:{settings.backend_port}")
+    
+    # 네이버 API 키 설정
+    if settings.naver_client_id and settings.naver_client_secret:
+        simple_product_search_service.set_api_keys(
+            naver_client_id=settings.naver_client_id,
+            naver_client_secret=settings.naver_client_secret
+        )
+        logger.info("✅ 네이버 API 키가 설정되었습니다.")
+    else:
+        logger.warning("⚠️ 네이버 API 키가 설정되지 않았습니다. 모의 검색 모드로 실행됩니다.")
     
     # AI Agent 초기화
     await initialize_agent()
@@ -60,6 +71,7 @@ app.include_router(upload.router, prefix="/api")
 app.include_router(session.router, prefix="/api")
 app.include_router(product.router, prefix="/api")
 app.include_router(chat.router, prefix="/api")
+app.include_router(config.router, prefix="/api")
 
 
 @app.get("/")

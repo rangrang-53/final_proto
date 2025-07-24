@@ -17,6 +17,7 @@ from typing import Dict, List, Optional, Tuple, Any
 from pathlib import Path
 
 from utils.logger import logger
+from .simple_product_search_service import simple_product_search_service
 
 
 class ProductRecognitionService:
@@ -384,8 +385,8 @@ class ProductRecognitionService:
         logger.info("브랜드를 검출할 수 없음")
         return None
     
-    def classify_product_category(self, image_path: str, detected_brand: Optional[str] = None) -> Dict[str, Any]:
-        """제품 카테고리 분류"""
+    async def classify_product_category(self, image_path: str, detected_brand: Optional[str] = None) -> Dict[str, Any]:
+        """제품 카테고리 분류 (웹 검색 통합)"""
         try:
             # 1단계: 가전제품 여부 판별
             appliance_check = self.is_appliance_image(image_path)
@@ -402,7 +403,7 @@ class ProductRecognitionService:
                     "extracted_texts": []
                 }
             
-            # 2단계: 가전제품인 경우 기존 분류 로직 수행
+            # 2단계: 가전제품인 경우 상세 분류 시작
             logger.info("가전제품으로 판별됨 - 상세 분류 시작")
             
             # 이미지에서 텍스트 추출
@@ -413,6 +414,76 @@ class ProductRecognitionService:
             if not detected_brand:
                 detected_brand = self.detect_brand_from_text(extracted_texts)
             
+            if detected_brand:
+                logger.info(f"브랜드 검출: {detected_brand}")
+                
+                # 3단계: 기본 OCR 기반 분류
+                basic_result = self._basic_classify_product(image_path, detected_brand, extracted_texts, all_text, appliance_check)
+                
+                if not basic_result["success"]:
+                    return basic_result
+                
+                # 4단계: 간단한 제품 검색으로 모델명 찾기
+                try:
+                    logger.info(f"제품 검색 시작: {detected_brand} - {basic_result['category']}")
+                    search_result = await simple_product_search_service.get_product_details(
+                        detected_brand.lower(), 
+                        basic_result["category"], 
+                        image_path
+                    )
+                    
+                    if search_result["success"]:
+                        # 검색 결과로 업데이트
+                        product_details = search_result["product_details"]
+                        
+                        logger.info(f"제품 검색 성공: {product_details['title']}")
+                        
+                        return {
+                            "success": True,
+                            "category": product_details["category"],
+                            "brand": product_details["brand"],
+                            "model": product_details.get("model", ""),
+                            "confidence": product_details["confidence"],
+                            "message": f"제품 정보를 찾았습니다: {product_details['title']}",
+                            "extracted_texts": [item['text'] for item in extracted_texts],
+                            "appliance_check": appliance_check,
+                            "search_method": product_details["search_method"],
+                            "product_title": product_details["title"],
+                            "similarity_score": product_details["similarity"]
+                        }
+                    else:
+                        logger.info(f"제품 검색 실패, 기본 분류 결과 사용: {search_result.get('error', '')}")
+                        return basic_result
+                        
+                except Exception as e:
+                    logger.warning(f"제품 검색 중 오류 발생, 기본 분류 결과 사용: {e}")
+                    return basic_result
+            else:
+                # 브랜드가 검출되지 않은 경우 기본 분류
+                return {
+                    "success": True,
+                    "category": "공기청정기",
+                    "brand": "unknown",
+                    "confidence": 0.6,
+                    "message": "브랜드를 확인할 수 없어 기본 분류를 적용했습니다.",
+                    "extracted_texts": [item['text'] for item in extracted_texts],
+                    "appliance_check": appliance_check
+                }
+                
+        except Exception as e:
+            logger.error(f"제품 분류 중 오류: {e}")
+            return {
+                "success": False,
+                "category": "오류",
+                "brand": "불분명",
+                "confidence": 0.0,
+                "message": f"분류 중 오류가 발생했습니다: {str(e)}",
+                "extracted_texts": []
+            }
+    
+    def _basic_classify_product(self, image_path: str, detected_brand: str, extracted_texts: List[Dict], all_text: str, appliance_check: Dict) -> Dict[str, Any]:
+        """기본 OCR 기반 제품 분류"""
+        try:
             # 이미지 기반 특징 분석
             category_scores = self._analyze_image_features(image_path, all_text)
             
@@ -462,14 +533,11 @@ class ProductRecognitionService:
             }
             
         except Exception as e:
-            logger.error(f"제품 분류 중 오류: {e}")
+            logger.error(f"기본 제품 분류 실패: {e}")
             return {
                 "success": False,
-                "category": "오류",
-                "brand": "불분명",
-                "confidence": 0.0,
-                "message": f"분류 중 오류가 발생했습니다: {str(e)}",
-                "extracted_texts": []
+                "error": str(e),
+                "message": "기본 제품 분류 중 오류가 발생했습니다."
             }
     
     def _analyze_image_features(self, image_path: str, text_content: str) -> Dict[str, float]:

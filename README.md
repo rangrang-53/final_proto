@@ -18,10 +18,30 @@
 ## 설치 및 실행
 
 ### 1. 환경 설정
+
+#### API 키 발급
+1. **Google API 키**: [Google Cloud Console](https://console.cloud.google.com/)에서 Gemini API 키 발급
+2. **네이버 API 키**: [네이버 개발자 센터](https://developers.naver.com/)에서 애플리케이션 등록 후 클라이언트 ID와 시크릿 발급
+
+#### 환경 변수 설정
 ```bash
 # 환경 변수 설정
 cp env.example .env
 # .env 파일을 열어서 API 키 설정
+```
+
+`.env` 파일 예시:
+```env
+# API 키 설정
+GOOGLE_API_KEY=your_google_api_key_here
+NAVER_CLIENT_ID=your_naver_client_id_here
+NAVER_CLIENT_SECRET=your_naver_client_secret_here
+
+# 서버 설정
+BACKEND_HOST=localhost
+BACKEND_PORT=8000
+FRONTEND_HOST=localhost
+FRONTEND_PORT=8501
 ```
 
 ### 2. 백엔드 실행

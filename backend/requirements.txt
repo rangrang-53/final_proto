@@ -21,6 +21,17 @@ langchain-core>=0.1.0
 # HTTP 클라이언트
 httpx>=0.25.0
 requests>=2.31.0
+aiohttp>=3.9.0
+
+# 웹 스크래핑
+selenium>=4.15.0
+webdriver-manager>=4.0.0
+beautifulsoup4>=4.12.0
+lxml>=4.9.0
+
+# 이미지 유사도 비교
+scikit-image>=0.21.0
+scipy>=1.11.0
 
 # 환경 변수 관리
 python-dotenv>=1.0.0
