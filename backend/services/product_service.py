@@ -140,13 +140,11 @@ class ProductRecognitionService:
             return {
                 "success": True,
                 "data": {
-                    "data": {
-                        "product_info": product_info,
-                        "usage_guide": session.get("usage_guide", ""),
-                        "analysis_timestamp": session.get("analysis_completed_at", ""),
-                        "has_image": "uploaded_image" in session,
-                        "is_appliance": is_appliance
-                    }
+                    "product_info": product_info,
+                    "usage_guide": session.get("usage_guide", ""),
+                    "analysis_timestamp": session.get("analysis_completed_at", ""),
+                    "has_image": "uploaded_image" in session,
+                    "is_appliance": is_appliance
                 },
                 "timestamp": datetime.now().isoformat()
             }

@@ -121,6 +121,26 @@ class ImageUploadComponent:
                     # 세션 ID 저장 (StateManager 사용)
                     StateManager.set_session_id(session_id)
                     
+                    # 제품 인식 결과 확인
+                    product_recognition = data["data"].get("product_recognition", {})
+                    
+                    # 가전제품이 아닌 경우 즉시 알림
+                    if product_recognition.get("category") == "가전제품_아님":
+                        # JavaScript alert 표시
+                        st.markdown("""
+                        <script>
+                        alert("⚠️ 가전제품이 아닙니다!\\n\\n업로드하신 이미지는 가전제품이 아닙니다.\\n가전제품 사진을 촬영하여 다시 업로드해 주세요.");
+                        </script>
+                        """, unsafe_allow_html=True)
+                        
+                        st.error("⚠️ 가전제품이 아닙니다")
+                        st.markdown(product_recognition.get("message", "업로드하신 이미지는 가전제품이 아닙니다. 가전제품 사진을 촬영하여 다시 업로드해 주세요."))
+                        
+                        # 메인 페이지로 이동 버튼
+                        if st.button("🏠 다시 업로드하기", use_container_width=True):
+                            st.rerun()
+                        return None
+                    
                     show_success_message("✅ 이미지가 성공적으로 업로드되었습니다!")
                     
                     # 자동으로 분석 시작

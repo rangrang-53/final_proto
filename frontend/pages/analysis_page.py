@@ -121,25 +121,22 @@ class AnalysisProgressPage:
             # 분석 결과 확인
             result = self.api_client.get_analysis_result(session_id)
             
-            # 디버깅: 백엔드 응답 전체 출력
-            st.write("DEBUG - 전체 백엔드 응답:", result)
-            
             # 분석 결과 확인
-            if result["success"] and "product_info" in result["data"].get("data", {}):
-                # 분석 완료 - 가전제품 여부 확인
-                data = result["data"]["data"]
+            if result["success"]:
+                # 데이터 구조 처리
+                data = result.get("data", {})
                 product_info = data.get("product_info", {})
-                
-                # 디버깅: 추출된 데이터 출력
-                st.write("DEBUG - 추출된 data:", data)
-                st.write("DEBUG - product_info:", product_info)
-                st.write("DEBUG - is_appliance:", data.get("is_appliance"))
-                st.write("DEBUG - category:", product_info.get("category"))
+                is_appliance = data.get("is_appliance", True)
                 
                 # 가전제품이 아닌 경우 즉시 알림
-                is_appliance = data.get("is_appliance", True)  # 기본값은 True
-                
                 if not is_appliance or product_info.get("category") == "가전제품_아님":
+                    # JavaScript alert 표시
+                    st.markdown("""
+                    <script>
+                    alert("⚠️ 가전제품이 아닙니다!\\n\\n업로드하신 이미지는 가전제품이 아닙니다.\\n가전제품 사진을 촬영하여 다시 업로드해 주세요.");
+                    </script>
+                    """, unsafe_allow_html=True)
+                    
                     st.error("⚠️ 가전제품이 아닙니다")
                     st.markdown("업로드하신 이미지는 가전제품이 아닙니다. 가전제품 사진을 촬영하여 다시 업로드해 주세요.")
                     
@@ -177,17 +174,20 @@ class AnalysisProgressPage:
         result = self.api_client.get_analysis_result(session_id)
         
         if result["success"]:
-            # 중첩된 데이터 구조 처리
+            # 데이터 구조 처리
             data = result.get("data", {})
-            if isinstance(data, dict) and "data" in data:
-                data = data["data"]
-            
             product_info = data.get("product_info", {})
-            
-
+            is_appliance = data.get("is_appliance", True)
             
             # 가전제품이 아닌 경우 처리
-            if product_info.get("category") == "가전제품_아님":
+            if not is_appliance or product_info.get("category") == "가전제품_아님":
+                # JavaScript alert 표시
+                st.markdown("""
+                <script>
+                alert("⚠️ 가전제품이 아닙니다!\\n\\n업로드하신 이미지는 가전제품이 아닙니다.\\n가전제품 사진을 촬영하여 다시 업로드해 주세요.");
+                </script>
+                """, unsafe_allow_html=True)
+                
                 st.error("⚠️ 가전제품이 아닙니다")
                 st.markdown("업로드하신 이미지는 가전제품이 아닙니다. 가전제품 사진을 촬영하여 다시 업로드해 주세요.")
                 

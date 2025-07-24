@@ -148,7 +148,10 @@ class ProductRecognitionService:
                 "집", "건물", "사무실", "상점", "학교", "건축",
                 "의자", "테이블", "침대", "소파", "책상", "가구",
                 "셔츠", "바지", "드레스", "신발", "모자", "옷", "패션",
-                "책", "잡지", "신문", "문서", "종이"
+                "책", "잡지", "신문", "문서", "종이",
+                # 추가 동물 관련 키워드
+                "feline", "canine", "mammal", "creature", "beast",
+                "고양이과", "개과", "포유류", "생물", "짐승"
             ]
             
             found_non_appliance_keywords = []
@@ -277,23 +280,27 @@ class ProductRecognitionService:
                             non_appliance_score += 0.3
                             break
             
-            # 4. 동물 특징 검사 (새로 추가)
-            # 고양이, 강아지 등의 특징적인 색상 범위
-            cat_colors = [
-                # 갈색 계열 (고양이 털)
-                cv2.inRange(hsv, np.array([10, 30, 30]), np.array([25, 255, 255])),
-                # 회색 계열 (고양이 털)
-                cv2.inRange(hsv, np.array([0, 0, 50]), np.array([180, 30, 150])),
-                # 흰색 계열 (고양이 털)
-                cv2.inRange(hsv, np.array([0, 0, 150]), np.array([180, 30, 255]))
+            # 4. 동물 특징 검사 (강화)
+            # 고양이, 강아지 등의 특징적인 색상 범위 (더 넓은 범위)
+            animal_colors = [
+                # 갈색 계열 (동물 털)
+                cv2.inRange(hsv, np.array([5, 20, 20]), np.array([30, 255, 255])),
+                # 회색 계열 (동물 털)
+                cv2.inRange(hsv, np.array([0, 0, 30]), np.array([180, 50, 200])),
+                # 흰색 계열 (동물 털)
+                cv2.inRange(hsv, np.array([0, 0, 120]), np.array([180, 50, 255])),
+                # 주황색 계열 (고양이 털)
+                cv2.inRange(hsv, np.array([5, 50, 50]), np.array([20, 255, 255])),
+                # 검은색 계열 (동물 털)
+                cv2.inRange(hsv, np.array([0, 0, 0]), np.array([180, 255, 80]))
             ]
             
-            cat_color_ratio = 0
-            for mask in cat_colors:
-                cat_color_ratio += cv2.countNonZero(mask) / (height * width)
+            animal_color_ratio = 0
+            for mask in animal_colors:
+                animal_color_ratio += cv2.countNonZero(mask) / (height * width)
             
-            if cat_color_ratio > 0.2:  # 고양이 색상이 20% 이상
-                non_appliance_score += 0.5
+            if animal_color_ratio > 0.15:  # 동물 색상이 15% 이상 (임계값 낮춤)
+                non_appliance_score += 0.6
             
             # 5. 대비 분석 (동물은 대비가 높음)
             gray_blur = cv2.GaussianBlur(gray, (5, 5), 0)
