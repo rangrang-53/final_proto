@@ -7,8 +7,8 @@ import requests
 from typing import Dict, Any
 import json
 
-from services.api_client import api_client
-from utils.constants import BACKEND_URL
+from services.api_client import get_api_client
+from utils.constants import BACKEND_BASE_URL
 
 
 def render_config_page():
@@ -146,7 +146,8 @@ def render_config_page():
 def get_api_keys_status() -> Dict[str, Any]:
     """API 키 설정 상태 조회"""
     try:
-        response = api_client.get(f"{BACKEND_URL}/api/config/api-keys/status")
+        client = get_api_client()
+        response = client.get(f"{BACKEND_URL}/api/config/api-keys/status")
         if response.status_code == 200:
             return response.json()
         else:
@@ -173,7 +174,8 @@ def set_api_keys(
             data["google_api_key"] = google_api_key
             data["google_cx"] = google_cx
         
-        response = api_client.post(
+        client = get_api_client()
+        response = client.post(
             f"{BACKEND_URL}/api/config/api-keys",
             json=data
         )
