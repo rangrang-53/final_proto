@@ -426,34 +426,63 @@ class ProductRecognitionService:
                 # 4단계: 간단한 제품 검색으로 모델명 찾기
                 try:
                     logger.info(f"제품 검색 시작: {detected_brand} - {basic_result['category']}")
-                    search_result = await simple_product_search_service.get_product_details(
+                    
+                    # 먼저 이미지 기반 검색 시도
+                    image_search_result = await simple_product_search_service.search_product_by_image(
+                        image_path, 
                         detected_brand.lower(), 
-                        basic_result["category"], 
-                        image_path
+                        basic_result["category"]
                     )
                     
-                    if search_result["success"]:
-                        # 검색 결과로 업데이트
-                        product_details = search_result["product_details"]
+                    if image_search_result["success"]:
+                        # 이미지 기반 검색 결과 사용
+                        product_info = image_search_result["product_info"]
                         
-                        logger.info(f"제품 검색 성공: {product_details['title']}")
+                        logger.info(f"이미지 기반 제품 검색 성공: {product_info['brand']} {product_info['model']}")
                         
                         return {
                             "success": True,
-                            "category": product_details["category"],
-                            "brand": product_details["brand"],
-                            "model": product_details.get("model", ""),
-                            "confidence": product_details["confidence"],
-                            "message": f"제품 정보를 찾았습니다: {product_details['title']}",
-                            "extracted_texts": [item['text'] for item in extracted_texts],
+                            "category": product_info["category"],
+                            "brand": product_info["brand"],
+                            "model": product_info["model"],
+                            "confidence": product_info["confidence"],
+                            "message": f"이미지 분석으로 제품 정보를 찾았습니다: {product_info['brand']} {product_info['model']}",
+                            "extracted_texts": product_info["extracted_texts"],
                             "appliance_check": appliance_check,
-                            "search_method": product_details["search_method"],
-                            "product_title": product_details["title"],
-                            "similarity_score": product_details["similarity"]
+                            "search_method": "image_based_search",
+                            "product_title": f"{product_info['brand']} {product_info['model']}",
+                            "similarity_score": product_info["confidence"]
                         }
                     else:
-                        logger.info(f"제품 검색 실패, 기본 분류 결과 사용: {search_result.get('error', '')}")
-                        return basic_result
+                        # 이미지 기반 검색 실패 시 기존 검색 방법 사용
+                        search_result = await simple_product_search_service.get_product_details(
+                            detected_brand.lower(), 
+                            basic_result["category"], 
+                            image_path
+                        )
+                        
+                        if search_result["success"]:
+                            # 검색 결과로 업데이트
+                            product_details = search_result["product_details"]
+                            
+                            logger.info(f"제품 검색 성공: {product_details['title']}")
+                            
+                            return {
+                                "success": True,
+                                "category": product_details["category"],
+                                "brand": product_details["brand"],
+                                "model": product_details.get("model", ""),
+                                "confidence": product_details["confidence"],
+                                "message": f"제품 정보를 찾았습니다: {product_details['title']}",
+                                "extracted_texts": [item['text'] for item in extracted_texts],
+                                "appliance_check": appliance_check,
+                                "search_method": product_details["search_method"],
+                                "product_title": product_details["title"],
+                                "similarity_score": product_details["similarity"]
+                            }
+                        else:
+                            logger.info(f"제품 검색 실패, 기본 분류 결과 사용: {search_result.get('error', '')}")
+                            return basic_result
                         
                 except Exception as e:
                     logger.warning(f"제품 검색 중 오류 발생, 기본 분류 결과 사용: {e}")

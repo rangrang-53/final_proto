@@ -93,6 +93,30 @@ def render_config_page():
     
     st.markdown("---")
     
+    # API 키 테스트
+    st.subheader("🧪 API 키 테스트")
+    
+    col1, col2 = st.columns(2)
+    
+    with col1:
+        if st.button("🔍 네이버 API 테스트"):
+            test_result = test_naver_api()
+            if test_result and test_result.get("success"):
+                st.success("✅ 네이버 API 키가 정상적으로 작동합니다!")
+                st.json(test_result)
+            else:
+                st.error("❌ 네이버 API 키 테스트 실패")
+                if test_result:
+                    st.error(f"오류: {test_result.get('error', '알 수 없는 오류')}")
+                    if test_result.get('error_details'):
+                        st.text_area("상세 오류 정보", test_result['error_details'], height=100)
+    
+    with col2:
+        if st.button("🔄 API 키 상태 새로고침"):
+            st.rerun()
+    
+    st.markdown("---")
+    
     # 도움말
     st.subheader("📖 API 키 발급 방법")
     
@@ -143,11 +167,28 @@ def render_config_page():
         """)
 
 
+def test_naver_api() -> Dict[str, Any]:
+    """네이버 API 키 테스트"""
+    try:
+        client = get_api_client()
+        response = client.get(f"{BACKEND_BASE_URL}/api/config/test-naver-api")
+        
+        if response.status_code == 200:
+            return response.json()
+        else:
+            st.error(f"API 테스트 요청 실패: {response.status_code}")
+            return None
+            
+    except Exception as e:
+        st.error(f"API 테스트 중 오류: {str(e)}")
+        return None
+
+
 def get_api_keys_status() -> Dict[str, Any]:
     """API 키 설정 상태 조회"""
     try:
         client = get_api_client()
-        response = client.get(f"{BACKEND_URL}/api/config/api-keys/status")
+        response = client.get(f"{BACKEND_BASE_URL}/api/config/api-keys/status")
         if response.status_code == 200:
             return response.json()
         else:
@@ -176,7 +217,7 @@ def set_api_keys(
         
         client = get_api_client()
         response = client.post(
-            f"{BACKEND_URL}/api/config/api-keys",
+            f"{BACKEND_BASE_URL}/api/config/api-keys",
             json=data
         )
         

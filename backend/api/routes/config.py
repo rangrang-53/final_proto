@@ -4,11 +4,12 @@
 
 from fastapi import APIRouter, Depends, HTTPException, status
 from pydantic import BaseModel
-from typing import Optional
+from typing import Optional, Dict, Any
 from datetime import datetime
 
 from api.dependencies import get_database, get_logger
 from config.api_keys import api_keys
+from services.simple_product_search_service import simple_product_search_service
 
 router = APIRouter(prefix="/config", tags=["설정"])
 
@@ -41,11 +42,21 @@ async def set_api_keys(
         # 네이버 API 키 설정
         if request.naver_client_id and request.naver_client_secret:
             api_keys.set_naver_keys(request.naver_client_id, request.naver_client_secret)
+            # 검색 서비스에도 API 키 설정
+            simple_product_search_service.set_api_keys(
+                naver_client_id=request.naver_client_id,
+                naver_client_secret=request.naver_client_secret
+            )
             logger.info("네이버 API 키가 설정되었습니다.")
         
         # Google API 키 설정
         if request.google_api_key and request.google_cx:
             api_keys.set_google_keys(request.google_api_key, request.google_cx)
+            # 검색 서비스에도 API 키 설정
+            simple_product_search_service.set_api_keys(
+                google_api_key=request.google_api_key,
+                google_cx=request.google_cx
+            )
             logger.info("Google API 키가 설정되었습니다.")
         
         return APIKeyResponse(
@@ -85,3 +96,61 @@ async def get_api_keys_status(
             status_code=status.HTTP_500_INTERNAL_SERVER_ERROR,
             detail=f"API 키 상태 조회 중 오류가 발생했습니다: {str(e)}"
         ) 
+
+
+@router.get("/test-naver-api", response_model=Dict[str, Any])
+async def test_naver_api(
+    logger = Depends(get_logger)
+):
+    """네이버 API 키 테스트"""
+    
+    try:
+        import aiohttp
+        
+        # API 키 확인
+        client_id, client_secret = api_keys.get_naver_keys()
+        
+        if not client_id or not client_secret:
+            return {
+                "success": False,
+                "error": "네이버 API 키가 설정되지 않았습니다.",
+                "client_id_set": bool(client_id),
+                "client_secret_set": bool(client_secret)
+            }
+        
+        # 간단한 검색 테스트
+        url = "https://openapi.naver.com/v1/search/shop.json"
+        headers = {
+            "X-Naver-Client-Id": client_id,
+            "X-Naver-Client-Secret": client_secret
+        }
+        params = {
+            "query": "테스트",
+            "display": 1
+        }
+        
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=headers, params=params) as response:
+                if response.status == 200:
+                    data = await response.json()
+                    return {
+                        "success": True,
+                        "message": "네이버 API 키가 정상적으로 작동합니다.",
+                        "status_code": response.status,
+                        "test_results": len(data.get("items", []))
+                    }
+                else:
+                    error_content = await response.text()
+                    return {
+                        "success": False,
+                        "error": f"네이버 API 테스트 실패: {response.status}",
+                        "error_details": error_content,
+                        "status_code": response.status
+                    }
+                    
+    except Exception as e:
+        logger.error(f"네이버 API 테스트 실패: {e}")
+        return {
+            "success": False,
+            "error": f"테스트 중 오류 발생: {str(e)}"
+        } 

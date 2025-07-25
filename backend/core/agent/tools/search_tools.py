@@ -206,10 +206,159 @@ def search_troubleshooting(brand: str, model: str, problem: str) -> Dict[str, An
         }
 
 
+@tool
+def naver_image_search(query: str, max_results: int = 10) -> Dict[str, Any]:
+    """
+    네이버 이미지 검색을 수행합니다.
+    
+    Args:
+        query: 검색할 키워드
+        max_results: 최대 검색 결과 수 (기본 10)
+    
+    Returns:
+        이미지 검색 결과 딕셔너리
+    """
+    
+    logger.info(f"네이버 이미지 검색 요청: {query}")
+    
+    try:
+        # 실제 네이버 이미지 검색 API 호출
+        import aiohttp
+        import os
+        
+        client_id = os.getenv("NAVER_CLIENT_ID")
+        client_secret = os.getenv("NAVER_CLIENT_SECRET")
+        
+        if not client_id or not client_secret:
+            logger.warning("네이버 API 키가 설정되지 않음")
+            return {
+                "success": False,
+                "error": "네이버 API 키가 설정되지 않았습니다.",
+                "results": []
+            }
+        
+        url = "https://openapi.naver.com/v1/search/image"
+        headers = {
+            "X-Naver-Client-Id": client_id,
+            "X-Naver-Client-Secret": client_secret
+        }
+        params = {
+            "query": query,
+            "display": min(max_results, 10),
+            "start": 1,
+            "sort": "sim"
+        }
+        
+        # 동기 HTTP 요청 (MCP 도구에서는 비동기 사용 불가)
+        import requests
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            results = data.get("items", [])
+            
+            logger.info(f"네이버 이미지 검색 완료: {len(results)}개 결과")
+            
+            return {
+                "success": True,
+                "query": query,
+                "results": results,
+                "total_count": data.get("total", 0)
+            }
+        else:
+            logger.error(f"네이버 이미지 검색 API 오류: {response.status_code}")
+            return {
+                "success": False,
+                "error": f"API 오류: {response.status_code}",
+                "results": []
+            }
+            
+    except Exception as e:
+        logger.error(f"네이버 이미지 검색 실패: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "results": []
+        }
+
+
+@tool
+def naver_web_search(query: str, max_results: int = 10) -> Dict[str, Any]:
+    """
+    네이버 웹 검색을 수행합니다.
+    
+    Args:
+        query: 검색할 키워드
+        max_results: 최대 검색 결과 수 (기본 10)
+    
+    Returns:
+        웹 검색 결과 딕셔너리
+    """
+    
+    logger.info(f"네이버 웹 검색 요청: {query}")
+    
+    try:
+        # 실제 네이버 웹 검색 API 호출
+        import requests
+        import os
+        
+        client_id = os.getenv("NAVER_CLIENT_ID")
+        client_secret = os.getenv("NAVER_CLIENT_SECRET")
+        
+        if not client_id or not client_secret:
+            logger.warning("네이버 API 키가 설정되지 않음")
+            return {
+                "success": False,
+                "error": "네이버 API 키가 설정되지 않았습니다.",
+                "results": []
+            }
+        
+        url = "https://openapi.naver.com/v1/search/webkr"
+        headers = {
+            "X-Naver-Client-Id": client_id,
+            "X-Naver-Client-Secret": client_secret
+        }
+        params = {
+            "query": query,
+            "display": min(max_results, 10),
+            "start": 1,
+            "sort": "sim"
+        }
+        
+        response = requests.get(url, headers=headers, params=params, timeout=10)
+        
+        if response.status_code == 200:
+            data = response.json()
+            results = data.get("items", [])
+            
+            logger.info(f"네이버 웹 검색 완료: {len(results)}개 결과")
+            
+            return {
+                "success": True,
+                "query": query,
+                "results": results,
+                "total_count": data.get("total", 0)
+            }
+        else:
+            logger.error(f"네이버 웹 검색 API 오류: {response.status_code}")
+            return {
+                "success": False,
+                "error": f"API 오류: {response.status_code}",
+                "results": []
+            }
+            
+    except Exception as e:
+        logger.error(f"네이버 웹 검색 실패: {str(e)}")
+        return {
+            "success": False,
+            "error": str(e),
+            "results": []
+        }
+
+
 # 사용 가능한 모든 도구 리스트
 AVAILABLE_TOOLS = [
     naver_search,
-    exa_search,
-    search_product_manual,
-    search_troubleshooting
+    naver_image_search,
+    naver_web_search
 ] 
