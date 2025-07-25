@@ -214,8 +214,8 @@ async def get_product_status(
     has_usage_guide = session.get("usage_guide") is not None
     
     # 가전제품이 아닌 경우 확인
-    product_info = session.get("product_info", {})
-    is_non_appliance = product_info.get("category") == "가전제품_아님"
+    product_info = session.get("product_info")
+    is_non_appliance = product_info is not None and product_info.get("category") == "가전제품_아님"
     
     if has_product_info:
         if is_non_appliance:

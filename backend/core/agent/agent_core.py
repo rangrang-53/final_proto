@@ -270,7 +270,7 @@ class ApplianceAgent:
             # 시스템 프롬프트 구성
             system_prompt = GENERAL_CHAT_PROMPT.format(product_info=product_str)
             
-            # 메시지 구성
+            # 메시지 구성 (시스템 메시지를 HumanMessage로 변환)
             messages = [HumanMessage(content=system_prompt)]
             
             # 이전 대화 히스토리 추가
@@ -284,20 +284,14 @@ class ApplianceAgent:
             # 현재 사용자 메시지 추가
             messages.append(HumanMessage(content=message))
             
-            # Agent 실행
-            config = {"configurable": {"thread_id": f"chat_{session_id}"}}
-            response = self.chat_agent.invoke(
-                {"messages": messages}, 
-                config=config
-            )
-            
-            ai_message = response["messages"][-1]
+            # 일반 LLM 호출 (Agent 대신 직접 모델 호출)
+            response = await self.model.ainvoke(messages)
             
             logger.info("사용자 대화 처리 완료")
             
             return {
                 "success": True,
-                "response": ai_message.content,
+                "response": response.content,
                 "timestamp": datetime.now().isoformat()
             }
             

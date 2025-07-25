@@ -27,17 +27,22 @@ def main():
     # 상태 초기화
     StateManager.initialize_state()
     
-    # 백엔드 연결 확인
-    if not check_backend_connection():
-        st.error("🔌 백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해 주세요.")
-        st.info("백엔드 서버를 실행한 후 페이지를 새로고침해 주세요.")
-        return
+    # 백엔드 연결 확인 (세션 상태에 저장하여 중복 확인 방지)
+    if "backend_connected" not in st.session_state:
+        if not check_backend_connection():
+            st.error("🔌 백엔드 서버에 연결할 수 없습니다. 서버가 실행 중인지 확인해 주세요.")
+            st.info("백엔드 서버를 실행한 후 페이지를 새로고침해 주세요.")
+            return
+        st.session_state.backend_connected = True
     
-    # 세션 ID 확인/생성
-    session_id = get_or_create_session()
-    if not session_id:
-        st.error("세션을 생성할 수 없습니다. 페이지를 새로고침해 주세요.")
-        return
+    # 세션 ID 확인/생성 (이미 있으면 재사용)
+    if "session_id" not in st.session_state:
+        session_id = get_or_create_session()
+        if not session_id:
+            st.error("세션을 생성할 수 없습니다. 페이지를 새로고침해 주세요.")
+            return
+    else:
+        session_id = st.session_state.session_id
     
     # 현재 페이지 가져오기
     current_page = StateManager.get_current_page()

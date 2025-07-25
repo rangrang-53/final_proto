@@ -179,13 +179,7 @@ def get_or_create_session() -> Optional[str]:
     # 세션 상태에서 기존 세션 ID 확인
     if "session_id" in st.session_state:
         session_id = st.session_state.session_id
-        
-        # 세션 유효성 확인
-        client = get_api_client()
-        result = client.get_session(session_id)
-        
-        if result["success"]:
-            return session_id
+        return session_id  # 세션이 있으면 바로 반환 (유효성 검사 생략)
     
     # 새 세션 생성
     client = get_api_client()

@@ -36,9 +36,6 @@ class ChatInterfacePage:
             self._send_message(session_id, suggested_question)
             StateManager.clear_suggested_question()
         
-        # 채팅 상태 확인
-        self._check_chat_status(session_id)
-        
         # 제품 정보 표시
         self._render_product_info_header(session_id)
         
@@ -170,6 +167,13 @@ class ChatInterfacePage:
     def _send_message(self, session_id: str, message: str):
         """메시지 전송"""
         
+        # 중복 전송 방지
+        if "last_sent_message" in st.session_state and st.session_state.last_sent_message == message:
+            return
+        
+        # 마지막 전송 메시지 저장
+        st.session_state.last_sent_message = message
+        
         # 사용자 메시지 즉시 표시
         with st.chat_message("user"):
             st.write(message)
@@ -191,8 +195,9 @@ class ChatInterfacePage:
                     error_msg = handle_api_error(result, "메시지 전송에 실패했습니다.")
                     st.error(error_msg)
         
-        # 페이지 새로고침하여 히스토리 업데이트
-        st.rerun()
+        # 메시지 전송 완료 후 상태 초기화
+        if "last_sent_message" in st.session_state:
+            del st.session_state.last_sent_message
     
     def _render_chat_controls(self, session_id: str):
         """채팅 제어 버튼들"""
