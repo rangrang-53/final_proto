@@ -12,3 +12,5 @@
 2. 이미지 분류
 3. 이미지 세분화
 	- Segment Anything (SAM): 해당 bbox 기반 세분화
+
+CLIP 이미지 분류 → SAM 이미지 세분화 → YOLOv8 tiny 로고 분류
